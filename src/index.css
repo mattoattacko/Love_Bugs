@@ -81,7 +81,7 @@ nav .logo-container {
 }
 
 nav .logo-container .logo {
-  width: 100%; /* only 60% with my logo. Should be 100% with Tinders */
+  width: 100%; 
 }
 
 /* ----- Home Page ----- */
@@ -215,40 +215,123 @@ nav .logo-container .logo {
 
 
 /* ----- Dashboard Page ----- */
+.dashboard {
+  display: flex;
+  justify-content: space-between;
+}
+
+.dashboard .swipe-container {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
 .swipe {
   position: absolute;
 }
 
-.card-container {
-  width: 90vw;
-  max-width: 260px;
-  height: 300px;
+.dashboard .card-container {
+  width: 400px;
+  height: 650px;
 }
 
 .card {
-  position: relative;
-  background-color: #fff;
-  width: 80vw;
-  max-width: 260px;
-  height: 300px;
-  box-shadow: 0px 0px 60px 0px rgba(0,0,0,0.30);
-  border-radius: 20px;
+  /* position: relative; */
+  width: 400px;
+  height: 650px;
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.30);
+  border-radius: 30px;
   background-size: cover;
   background-position: center;
 }
 
-.cardContent {
-  width: 100%;
-  height: 100%;
-}
-
-.swipe:last-of-type {
-
-}
-
 .card h3 {
+  margin-top: 0;
+}
+
+.dashboard .swipe-info {
   position: absolute;
   bottom: 0;
+  padding: 10px; /* video says 10px, but right now its to little */
+}
+
+
+
+
+/* ----- Chat Container Page ----- */
+
+.chat-container {
+  background-color: rgba(255,255,255);
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, 
+  rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  width: 30%;
+  text-align: left;
+  z-index: 1;
+}
+
+.chat-container .chat-container-header {
+  background: linear-gradient(45deg, rgb(254, 48, 114), rgba(255, 89, 64));
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-container .option {
+  border: none;
+  background: rgb(255, 255, 255);
+  border-bottom: solid 4px rgb(243, 33, 33);
+  font-size: 20px;
+  margin: 2px;
+  padding: 10px;
+}
+
+.chat-container .option:disabled {
+  border-bottom: solid 4px rgb(187, 187, 187);
+}
+
+.chat-container .profile {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  color: rgb(255, 255, 255);
+}
+
+/* .log-out-icon is seperated out from the .profile class above because the react-icon I used needs changes to the width/height. Can combine this styling with above styling if the icon we use is not an RI. */
+.chat-container .log-out-icon {
+  padding: 20px;
+  width: 30%;
+  height: 30%;
+  display: flex;
+  align-items: center;
+  color: rgb(255, 255, 255);
+}
+
+.img-container {
+  height: 30px;
+  width: 30px;
+  border-radius: 15px;
+  overflow: hidden;
   margin: 10px;
-  color: #fff;
+}
+
+.img-container img {
+  width: 100%;
+}
+
+
+/* ----- Chat Display ----- */
+.chat-display {
+  padding: 20px;
+  height: 60vh;
+  overflow-y: auto;
+}
+
+.chat-input {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
