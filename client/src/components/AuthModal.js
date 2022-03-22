@@ -29,8 +29,9 @@ const AuthModal = ({ setShowModal, isSignUp }) => {
       
       // we save the API response
       // we also need to pass through the email and password to the backend
+      // `if its signup, return signup. Else return login`
       // we are saving the response because we want to store the email, userId, and token as cookies
-      const response = await axios.post('http://localhost:8000/signup', { email, password })
+      const response = await axios.post(`http://localhost:8000/${isSignUp ? 'signup' : 'login'}`, { email, password })
 
       // we set the cookie email to be whatever the response.data.email is, which is returned sanitized from a function in 'index.js'
       setCookie('Email', response.data.email)
@@ -41,7 +42,10 @@ const AuthModal = ({ setShowModal, isSignUp }) => {
       const success = response.status === 201
 
       // if it is successful, we take them to the onboarding page
-      if (success) navigate('/onboarding')
+      if (success && isSignUp) navigate('/onboarding')
+
+      // if its not signup, send them to the dashboard
+      if (success && !isSignUp) navigate('/dashboard')
 
     } catch (error) {
       console.log(error)

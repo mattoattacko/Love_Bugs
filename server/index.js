@@ -16,6 +16,9 @@ app.get('/', (req, res) => {
   res.json('Yo dawg I heard you like json so I put json in your json');
 })
 
+
+// ***** Sign Up ***** //
+
 // sends info to our DB
 // we pass stuff via the 'body'
 // we make this post request in "AuthModal.js" in the "handleSubmit" function in the Frontend. 
@@ -69,7 +72,38 @@ app.post('/signup', async (req, res) => {
   } catch (error) {
     console.log(error)
   }
+})
 
+
+// ***** Sign In ***** //
+app.post('/login', async (req, res) => {
+  const client = new MongoClient(uri)
+  const { email, password } = req.body
+
+  try {
+    await client.connect()
+    const database = client.db('app-data')
+    const users = database.collection('users')
+
+    //we go into the DB, into the collection of users, and search for the user by email
+    const user = await users.findOne({ email })
+
+    // once we have the user, we compare the PW they entered and the hashed PW and see if they match
+    // we pass them to 'bcrypt.compare'.
+    const correctPassword = await bcrypt.compare(password, user.hashed_password)
+
+    // if the user exists and the PW is correct, we create a token for the user. Else we send them back an error.
+    if (user && correctPassword) {
+      const token = jwt.sign(user, email, {
+        expiresIn: 60 * 24 // 24 hours
+      })
+      res.status(201).json({ token, userId: user.user_id, email: user.email })
+    }
+
+    res.status(400).send('Invalid email or password')
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 // retrieves all data from the DB. First makes a new MongoClient.
