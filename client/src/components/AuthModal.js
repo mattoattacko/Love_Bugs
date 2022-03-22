@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 import axios from "axios";
 
 const AuthModal = ({ setShowModal, isSignUp }) => {
@@ -8,6 +9,7 @@ const AuthModal = ({ setShowModal, isSignUp }) => {
   const [password, setPassword] = useState(null);
   const [confirmPassword, setConfirmPassword] = useState(null);
   const [error, setError] = useState(null);
+  const [cookies, setCookie, removeCookie] = useCookies(['user']);
 
   let navigate = useNavigate();
   // console.log(email, password, confirmPassword)
@@ -27,7 +29,13 @@ const AuthModal = ({ setShowModal, isSignUp }) => {
       
       // we save the API response
       // we also need to pass through the email and password to the backend
+      // we are saving the response because we want to store the email, userId, and token as cookies
       const response = await axios.post('http://localhost:8000/signup', { email, password })
+
+      // we set the cookie email to be whatever the response.data.email is, which is returned sanitized from a function in 'index.js'
+      setCookie('Email', response.data.email)
+      setCookie('UserId', response.data.userId)
+      setCookie('AuthToken', response.data.token)
 
       // if the status is 201, we know the user was created successfully
       const success = response.status === 201

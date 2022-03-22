@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 app.post('/signup', async (req, res) => {
   const client = new MongoClient(uri)
 
-  console.log(req.body)
+  // console.log(req.body)
 
   // email and password to send with the body
   // this is all a demonstration of how to pass data from the FE to the BE.
