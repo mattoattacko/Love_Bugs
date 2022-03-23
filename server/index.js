@@ -109,7 +109,41 @@ app.post('/login', async (req, res) => {
   }
 })
 
-// retrieves all data from the DB. First makes a new MongoClient.
+
+// ***** Get Individual User Info ***** //
+
+// we can reuse endpoints if its a different method
+app.get('/user', async (req, res) => {
+  const client = new MongoClient(uri)
+  const userId = req.query.userId //we need to pass through the userId as a parameter. We do that in the Dashboard.
+
+  console.log('userId', userId)
+
+  try {
+    await client.connect()
+    const database = client.db('app-data')
+    const users = database.collection('users') //gets users colletion
+
+    //we search for the user and all of their data by the userId.
+    // which we passed through via params
+    const query = { user_id: userId }
+
+    //gets users collection and finds one user based on the query we wrote
+    const user = await users.findOne(query)
+    res.send(user)
+
+  } finally {
+    await client.close()
+  }
+})
+
+
+
+
+// ***** Get All Users ***** //
+
+// retrieves all data from the DB. 
+// First makes a new MongoClient.
 // for 'connect()', we pass in the DB we want to connect to.
 // "database.collection('users')"" searches through the collection of users.
 // "await users.toArray()" returns an array of all users in the collection.

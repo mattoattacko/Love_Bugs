@@ -35,7 +35,7 @@ const AuthModal = ({ setShowModal, isSignUp }) => {
 
       // we set the cookie AuthToken to be whatever the response.data.token is, which is returned sanitized from a function in 'index.js'
       setCookie('AuthToken', response.data.token)
-      setCookie('userId', response.data.userId)
+      setCookie('UserId', response.data.userId)
 
       // if the status is 201, we know the user was created successfully
       const success = response.status === 201
@@ -45,6 +45,10 @@ const AuthModal = ({ setShowModal, isSignUp }) => {
 
       // if its not signup, send them to the dashboard
       if (success && !isSignUp) navigate('/dashboard')
+
+      // this is necessary for the logout function to work. The auth token gets read by /onboarding and /dashboard as well. 
+      window.location.reload()
+
 
     } catch (error) {
       console.log(error)
