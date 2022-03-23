@@ -1,11 +1,17 @@
 import { useState } from 'react';
+import { useCookies } from 'react-cookie';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 import Nav from '../components/Nav';
 
 
 const Onboarding = () => {
 
+  const [cookies, setCookie, removeCookie] = useCookies(['user']);
+
   const [formData, setFormData] = useState({
-    user_id: '',
+    user_id: cookies.UserId, //UserId is used in video, but seems like userId works?
     first_name: '',
     dob_day: '',
     dob_month: '',
@@ -13,14 +19,25 @@ const Onboarding = () => {
     show_gender: false,
     gender_identity: 'man',
     gender_interest: 'woman',
-    email: '',
     url: '',
     about: '',
     matches: [],
   })
 
-  const handleSubmit = () => {
-    console.log('submitted');
+  let navigate = useNavigate()
+
+  //we are sending over the data from our update function in index.js
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    try {
+      const response = await axios.put('http://localhost:8000/user', { formData })
+      const success = response.status === 200
+      if (success) navigate('/dashboard')
+    } catch (error) {
+      console.log(error)
+    }
+
   }
 
   const handleChange = (e) => {
@@ -197,7 +214,7 @@ const Onboarding = () => {
 
           {/* ---- Picture Stuff ---- */}
           <section>
-            <label htmlFor='url'>Profile Picture</label>
+            <label htmlFor='url'>Profile Picture (url)</label>
             <input
               type='url'
               name='url'
@@ -206,7 +223,8 @@ const Onboarding = () => {
               required={true}
             />
             <div className="photo-container">
-              <img src={formData.url} alt='profile pic preview' />
+              {/* We only want to show the picture if it actually exists */}
+              {formData.url && <img src={formData.url} alt='profile pic preview' />}
             </div>
           </section>
 

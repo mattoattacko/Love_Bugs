@@ -22,7 +22,7 @@ const AuthModal = ({ setShowModal, isSignUp }) => {
     e.preventDefault()
 
     try {
-      if ( isSignUp && (password !== confirmPassword)) {
+      if ( isSignUp && (password !== confirmPassword )) {
         setError("Passwords do not match")
         return
       }
@@ -33,10 +33,9 @@ const AuthModal = ({ setShowModal, isSignUp }) => {
       // we are saving the response because we want to store the email, userId, and token as cookies
       const response = await axios.post(`http://localhost:8000/${isSignUp ? 'signup' : 'login'}`, { email, password })
 
-      // we set the cookie email to be whatever the response.data.email is, which is returned sanitized from a function in 'index.js'
-      setCookie('Email', response.data.email)
-      setCookie('UserId', response.data.userId)
+      // we set the cookie AuthToken to be whatever the response.data.token is, which is returned sanitized from a function in 'index.js'
       setCookie('AuthToken', response.data.token)
+      setCookie('userId', response.data.userId)
 
       // if the status is 201, we know the user was created successfully
       const success = response.status === 201
