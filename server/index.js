@@ -117,7 +117,7 @@ app.get('/user', async (req, res) => {
   const client = new MongoClient(uri)
   const userId = req.query.userId //we need to pass through the userId as a parameter. We do that in the Dashboard.
 
-  console.log('userId', userId)
+  // console.log('userId', userId)
 
   try {
     await client.connect()
@@ -142,6 +142,7 @@ app.get('/user', async (req, res) => {
 
 // ***** Get All Users ***** //
 
+// note: changed to get and filter the users by gender
 // retrieves all data from the DB. 
 // First makes a new MongoClient.
 // for 'connect()', we pass in the DB we want to connect to.
@@ -149,18 +150,23 @@ app.get('/user', async (req, res) => {
 // "await users.toArray()" returns an array of all users in the collection.
 // "res.send(returnedUsers)" sends the array of users to the client so we can display them in the browser. 
 // We "await client.close" to make sure the client is closed before we exit the function.
-app.get('/users', async (req, res) => {
+app.get('/gendered-users', async (req, res) => {
   const client = new MongoClient(uri) 
+  const gender = req.query.gender
+
+  // console.log('gender', gender)
 
   try {
     await client.connect()
     const database = client.db('app-data')
     const users = database.collection('users')
 
-    const returnedUsers = await users.find().toArray()
-    res.send(returnedUsers)
-  } catch (error) {
-    console.log(error)
+    const query = { gender_identity: {$eq : gender} }
+    const foundUsers = await users.find(query).toArray()
+
+    res.send(foundUsers)
+  } finally {
+    await client.close()
   }
 })
 
@@ -203,6 +209,30 @@ app.put('/user', async (req, res) => {
 })
 
 
+// ***** Adds Match ***** //
+
+app.put('/addmatch', async (req, res) => {
+  const client = new MongoClient(uri)
+  const { userId, matchedUserId } = req.body
+
+  try {
+    await client.connect()
+    const database = client.db('app-data')
+    const users = database.collection('users') 
+
+    //we look for ourselves (the user who is signed in) in the DB
+    const query = { user_id: userId }
+
+    //once we find them, we update the matches array by pushing the matchedUserId
+    const updateDocument = { 
+      $push: { matches: { user_id: matchedUserId }}, 
+    }
+    const user = await users.updateOne(query, updateDocument)
+    res.send(user)
+  } finally {
+    await client.close()
+  }
+})
 
 
 
