@@ -30,7 +30,7 @@ const Dashboard = () => {
   //Gets users gender interest and sends it through so the response will be the gendered users
   const getGenderedUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/gendered-users' , {
+      const response = await axios.get('http://localhost:8000/gendered-users', {
         params: { gender: user?.gender_interest}
       })
       setGenderedUsers(response.data)
@@ -61,7 +61,6 @@ const Dashboard = () => {
   }
 
  
-
   const swiped = (direction, swipedUserId) => {
 
     if (direction === 'right') {
@@ -74,8 +73,19 @@ const Dashboard = () => {
     console.log(name + ' left the screen!') // logs who the user has gotten rid of. Removes from DB
   }
 
-  return (
+  //goes into User object, and if it exists we get the matched array (containing objects) and turn it into an array of user IDs
+  //we add our own userID so that it doesn't show up
+  const matchedUserIds = user?.matches.map(({ user_id }) => user_id).concat(userId)
 
+  //if the genderedUser exists, filter them out.
+  //if the gendered users do not exist (not included in the matched userIds), then return it
+  const filteredGenderedUsers = genderedUsers?.filter(
+    genderedUser => !matchedUserIds.includes(genderedUser.user_id)
+  )
+
+
+
+  return (
     <>
       {user &&
         <div className="dashboard">
@@ -83,7 +93,7 @@ const Dashboard = () => {
           <div className="swipe-container">
             <div className='card-container'>
             
-              {genderedUsers?.map((genderedUser) =>
+              {filteredGenderedUsers?.map((genderedUser) =>
                 <TinderCard 
                   className='swipe' 
                   key={genderedUser.first_name} 

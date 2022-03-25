@@ -74,9 +74,10 @@ app.post('/signup', async (req, res) => {
     console.log(error)
   }
 })
-
+ 
 
 // ***** Log-In ***** //
+
 app.post('/login', async (req, res) => {
   const client = new MongoClient(uri)
   const { email, password } = req.body
@@ -140,7 +141,41 @@ app.get('/user', async (req, res) => {
 
 
 
-// ***** Get All Users ***** //
+// ***** Matches ***** //
+
+app.get('/users', async (req, res) => {
+  const client = new MongoClient(uri)
+  const userIds = JSON.parse(req.query.userIds)
+
+  console.log(userIds)
+
+
+  try {
+    await client.connect()
+    const database = client.db('app-data') 
+    const users = database.collection('users')
+
+    const pipeline = [
+      {
+        '$match': {
+          'user_id': {
+            '$in': userIds
+          }
+        }
+      }
+    ]
+    
+    const foundUsers = await users.aggregate(pipeline).toArray()
+
+    res.send(foundUsers)
+    
+  } finally {
+    await client.close()
+  }
+})
+
+
+// ***** Get All Users (gendered) ***** //
 
 // note: changed to get and filter the users by gender
 // retrieves all data from the DB. 
@@ -235,6 +270,28 @@ app.put('/addmatch', async (req, res) => {
 })
 
 
+// ***** Messages ***** //
 
+// for our query, we go into our message collection and we look for anything that has the from userId (the user who sent the message) and the "to_userId" (the user who received the message)
+// we make an array out of everything that returns from our query
+app.get('/messages', async (req, res) => {
+  const client = new MongoClient(uri)
+  const { userId, correspondingUserId } = req.query
+  console.log(userId, correspondingUserId)
+
+  try {
+    await client.connect()
+    const database = client.db('app-data')
+    const messages = database.collection('messages')
+
+    const query = {
+      from_userId: userId, to_userId: correspondingUserId
+    }
+    const foundMessages = await messages.find(query).toArray()
+    res.send(foundMessages)
+  } finally {
+    await client.close()
+  }
+})
 
 app.listen(PORT, () => console.log('server running on PORT ' + PORT));

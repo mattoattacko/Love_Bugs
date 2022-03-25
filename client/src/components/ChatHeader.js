@@ -17,7 +17,7 @@ const ChatHeader = ({ user }) => {
     <div className='chat-container-header'>
       <div className='profile' >
         <div className='img-container' >
-          <img src={user.url} alt={'photo of ' + user.first_name} />
+          <img src={user.url} alt={'photo of ' + user.url} />
         </div>
         <h3>{user.first_name}</h3>
       </div>
