@@ -2,15 +2,14 @@ import lovebugsOG from '../images/lovebugsOG.png'
 import lovebugsWhite from '../images/lovebugsWhite.png'
 
 
-const Nav = ({ minimal, setShowModal, showModal, setIsSignUp }) => {
+const Nav = ({ authToken, minimal, setShowModal, showModal, setIsSignUp }) => {
 
   const handleClick = () => {
     setShowModal(true); //if you click on it, the modal will show
     setIsSignUp(false); // false because we are logging in
   }
 
-  const authToken = false
-
+  
   return (
     <nav>
       <div className="logo-container">

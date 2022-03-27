@@ -41,20 +41,16 @@ const Onboarding = () => {
   }
 
   const handleChange = (e) => {
-    console.log('e', e)
 
     // If we set the value to '= e.target.value', it will set the 'show_gender' button to just 'on'. We want it to be TRUE or FALSE. So we change it to "= e.target.type === ..." and check if the type is 'checked' or not. If it is, we display it as TRUE.
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value
-    const name = e.target.name;
-    console.log('value'+ value, 'name'+ name);
+    const name = e.target.name
 
     setFormData((prevState) => ({
       ...prevState,
       [name]: value
     }))
   }
-
-  console.log(formData); // with this we can see all the form Q/As in the console
 
   return (
     <>
@@ -214,7 +210,7 @@ const Onboarding = () => {
 
           {/* ---- Picture Stuff ---- */}
           <section>
-            <label htmlFor='url'>Profile Picture (url)</label>
+            <label htmlFor='about'>Profile Picture (url)</label>
             <input
               type='url'
               name='url'

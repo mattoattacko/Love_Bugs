@@ -2,15 +2,14 @@ import { useEffect, useState } from 'react'
 import { useCookies } from 'react-cookie'
 import axios from 'axios'
 import TinderCard from 'react-tinder-card'
-
 import ChatContainer from '../components/ChatContainer'
 
 const Dashboard = () => {
-
-  const [genderedUsers, setGenderedUsers] = useState(null)
   const [user, setUser] = useState(null)
-  const [cookies, setCookie, removeCookie] = useCookies(['user'])
+  const [genderedUsers, setGenderedUsers] = useState(null)
   const [lastDirection, setLastDirection] = useState()
+  const [cookies, setCookie, removeCookie] = useCookies(['user'])
+
 
   const userId = cookies.UserId
 
@@ -31,7 +30,7 @@ const Dashboard = () => {
   const getGenderedUsers = async () => {
     try {
       const response = await axios.get('http://localhost:8000/gendered-users', {
-        params: { gender: user?.gender_interest}
+        params: { gender: user?.gender_interest }
       })
       setGenderedUsers(response.data)
     } catch (error) {
@@ -42,15 +41,20 @@ const Dashboard = () => {
   // we make a get request to get the user from the BE, which then makes a call to the DB, and we save the response as 'user'.
   useEffect(() => {
     getUser()
-    getGenderedUsers()
-  }, [user, genderedUsers])
+  }, [])
+
+  useEffect(() => {
+    if (user) {
+      getGenderedUsers()
+    }
+  }, [user])
 
   // console.log(genderedUsers)
 
 
   const updateMatches = async (matchedUserId) => {
     try {
-      await axios.put('http://localhost:8000/addmatch', { 
+      await axios.put('http://localhost:8000/addmatch', {
         userId,
         matchedUserId
       })
@@ -60,7 +64,7 @@ const Dashboard = () => {
     }
   }
 
- 
+
   const swiped = (direction, swipedUserId) => {
 
     if (direction === 'right') {
@@ -92,27 +96,27 @@ const Dashboard = () => {
           <ChatContainer user={user} />
           <div className="swipe-container">
             <div className='card-container'>
-            
+
               {filteredGenderedUsers?.map((genderedUser) =>
-                <TinderCard 
-                  className='swipe' 
-                  key={genderedUser.first_name} 
+                <TinderCard
+                  className='swipe'
+                  key={genderedUser.user_id}
                   onSwipe={(dir) => swiped(dir, genderedUser.user_id)} //logs direction. Goes into the 'swiped' function and changes the 'lastDirection' so that we know the direction at all times.
                   onCardLeftScreen={() => outOfFrame(genderedUser.first_name)}>
-                    <div 
-                      style={{ backgroundImage: 'url(' + genderedUser.url + ')' }} 
-                      className='card'
-                    >
-                      <h3>{genderedUser.first_name}</h3>
-                    </div>
+                  <div
+                    style={{ backgroundImage: 'url(' + genderedUser.url + ')' }}
+                    className='card'
+                  >
+                    <h3>{genderedUser.first_name}</h3>
+                  </div>
                 </TinderCard>
               )}
 
-            <div className='swipe-info'>
-              {lastDirection ? <p>You swiped {lastDirection}</p> : <p/>}
+              <div className='swipe-info'>
+                {lastDirection ? <p>You swiped {lastDirection}</p> : <p />}
+              </div>
             </div>
-            </div>
-          </div>        
+          </div>
         </div>
       }
     </>

@@ -5,8 +5,9 @@ const { v1: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
 
-const uri = 'mongodb+srv://matto:mattmatt7878@cluster0.k8dtk.mongodb.net/Cluster0?retryWrites=true&w=majority'
+const uri = process.env.URI
 
 const app = express()
 app.use(cors());
@@ -48,7 +49,7 @@ app.post('/signup', async (req, res) => {
     const existingUser = await users.findOne({ email })
 
     if (existingUser) {
-      return res.status(400).send( 'User already exists' )      
+      return res.status(409).send( 'User already exists' )      
     }
 
     // sanitize the email for consistencies sake. 
@@ -72,6 +73,9 @@ app.post('/signup', async (req, res) => {
 
   } catch (error) {
     console.log(error)
+  }
+  finally {
+    await client.close()
   }
 })
  
@@ -104,9 +108,12 @@ app.post('/login', async (req, res) => {
 
     }
 
-    res.status(400).send('Invalid email or password')
+    res.status(400).json('Invalid email or password')
   } catch (error) {
     console.log(error)
+  }
+  finally {
+    await client.close()
   }
 })
 
@@ -147,7 +154,7 @@ app.get('/users', async (req, res) => {
   const client = new MongoClient(uri)
   const userIds = JSON.parse(req.query.userIds)
 
-  console.log(userIds)
+  // console.log(userIds)
 
 
   try {
@@ -277,7 +284,7 @@ app.put('/addmatch', async (req, res) => {
 app.get('/messages', async (req, res) => {
   const client = new MongoClient(uri)
   const { userId, correspondingUserId } = req.query
-  console.log(userId, correspondingUserId)
+  // console.log(userId, correspondingUserId)
 
   try {
     await client.connect()
@@ -293,5 +300,53 @@ app.get('/messages', async (req, res) => {
     await client.close()
   }
 })
+
+
+// ***** Chatting ***** //
+
+// we pass through the message from rec.body
+// we get our messages collection and insert one message we just passed through
+app.post('/message', async (req, res) => {
+  const client = new MongoClient(uri)
+  const message = req.body.message
+
+  try {
+    await client.connect()
+    const database = client.db('app-data')
+    const messages = database.collection('messages')
+    const insertedMessage = await messages.insertOne(message)
+    res.send(insertedMessage)
+  } finally {
+    await client.close()
+  }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.listen(PORT, () => console.log('server running on PORT ' + PORT));

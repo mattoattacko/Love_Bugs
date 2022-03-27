@@ -43,11 +43,10 @@ const ChatDisplay = ({ user, clickedUser }) => {
     }
   } 
   
-  //gets messages anytime they've changed. We call it twice so we can show the messages either way.
   useEffect(() => {
     getUsersMessages()
     getClickedUsersMessages()
-  }, [usersMessages, clickedUsersMessages])
+  }, [])
 
   // Formats messages
   const messages = []
@@ -78,7 +77,13 @@ const ChatDisplay = ({ user, clickedUser }) => {
   return (
     <>
       <Chat descendingOrderMessages={descendingOrderMessages} />
-      <ChatInput />
+      <ChatInput 
+        user={user}
+        clickedUser={clickedUser}
+        getUsersMessages={getUsersMessages}
+        getClickedUsersMessages={getClickedUsersMessages} 
+
+      />
     </>
   )
 }
