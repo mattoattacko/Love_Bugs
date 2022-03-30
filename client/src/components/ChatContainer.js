@@ -8,6 +8,7 @@ const ChatContainer = ({ user }) => {
 
   const [clickedUser, setClickedUser] = useState(null)
 
+  console.log('=====', user)
 
   return (
     <div className='chat-container'>

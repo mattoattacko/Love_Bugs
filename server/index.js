@@ -204,8 +204,9 @@ app.get('/gendered-users', async (req, res) => {
     const database = client.db('app-data')
     const users = database.collection('users')
 
+    const hasLimit = req.query.gender !== 'everyone'
     const query = { gender_identity: {$eq : gender} }
-    const foundUsers = await users.find(query).toArray()
+    let foundUsers = await users.find(hasLimit ? query : null).toArray()
 
     res.send(foundUsers)
   } finally {

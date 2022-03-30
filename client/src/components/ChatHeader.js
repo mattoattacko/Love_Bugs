@@ -1,16 +1,17 @@
+import { useNavigate } from 'react-router-dom'
 import { useCookies } from 'react-cookie'
 import {RiLogoutBoxLine} from 'react-icons/ri'
 
 
 
 const ChatHeader = ({ user }) => {
-
+  const navigate = useNavigate()
   const [cookies, setCookie, removeCookie] = useCookies(['user'])
 
   const logout = () => {
     removeCookie('UserId', cookies.UserId)
     removeCookie('AuthToken', cookies.AuthToken)
-    window.location.reload()
+    navigate('/')
   }
 
   return (

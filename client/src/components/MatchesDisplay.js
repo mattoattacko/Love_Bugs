@@ -30,7 +30,7 @@ const MatchesDisplay = ({ matches, setClickedUser }) => {
   // goes into matched profiles, and then goes into each profiles matches and filters out the the ones that have our user id.
   const filteredMatchesProfiles = matchedProfiles?.filter(
     (matchedProfile) => 
-      matchedProfile.matches.filter((profile) => profile.user_id === userId).length > 0
+      matchedProfile.matches?.filter((profile) => profile.user_id === userId).length > 0
   )
 
   return (
